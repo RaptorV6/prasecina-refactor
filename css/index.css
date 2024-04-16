@@ -1,0 +1,55 @@
+table {
+    margin: 0 auto;
+    font-size: large;
+    border: 1px solid black;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.table-hover>tbody>tr:hover {
+    background-color: #004b879e;
+    cursor: pointer;
+}
+
+td {
+    border: 1px solid black;
+}
+
+th {
+    text-align: center;
+    background-color: #004b87;
+    color: white;
+}
+
+td {
+    font-weight: bold;
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+td {
+    font-weight: lighter;
+}
+
+#addnew {
+    color: #004b87 !important;
+    border-bottom: 2px solid #004b87 !important;
+    border-radius: 0;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+#addnew:hover {
+    color: white !important;
+    background-color: #004b87;
+    border-radius: 3px;
+}
+
+#levo {
+    position: relative;
+    left: 30%;
+    top: 41px;
+}

@@ -1,0 +1,270 @@
+@media all and (min-width: 500px) and (max-width: 1500px) {
+    html {
+   
+		zoom:86%;	
+
+    }
+}
+
+.posun {
+    position: relative;
+    right: -5%;
+}
+
+#size {
+    margin-top: 6%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+@media (min-width: 1430px) {
+    .container {
+        display: grid;
+        grid-template-columns: 0px 1fr 200px;
+        grid-template-rows: auto 1fr auto;
+    }
+}
+
+.one {
+    position: relative;
+    left: 9%;
+    top: 10px;
+    text-align: center;
+}
+
+.two {
+    top: 10px;
+    position: relative;
+    left: 18%;
+    text-align: center;
+}
+
+.left {
+    text-align: center;
+    position: relative;
+    top: 10px;
+    left: -10%;
+}
+
+.right {
+    text-align: center;
+    position: relative;
+    top: 10px;
+    right: -61%;
+}
+
+.right:hover {
+    color: white !important;
+    background-color: green !important;
+    border-color: green !important
+}
+
+.left:hover {
+    color: white !important;
+    background-color: red !important;
+    border-color: red !important
+}
+
+ě #form {
+    position: relative;
+}
+
+#wrapper {
+    border: 1px soild black;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1177px;
+    height: 700px;
+    position: relative;
+}
+
+.nadpis {
+    top: 14px;
+}
+
+.input {
+    position: relative;
+    width: 16%;
+    display: inline-block;
+    position: static;
+    position: relative;
+}
+
+#addrow {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 40px;
+    /* Preferred icon size */
+    display: inline-block;
+    line-height: 0;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+    position: relative;
+    bottom: -11px;
+    top: 13px;
+}
+
+.prijemce label {
+    margin-left: -74px;
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-primary {
+    background-color: transparent !important;
+}
+
+#addnew {
+    color: white;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+#addnew a {
+    color: #004b87;
+    size: 5px;
+}
+
+#addnew:hover a {
+    color: white;
+}
+
+#addnew:hover {
+    background-color: #004b87;
+    color: white;
+}
+
+#addtheitem {
+    color: #004b87 !important;
+    /*z-index; position; margin-top; top; */
+    color: white;
+    background-color: #004b87;
+    height: 10px;
+    padding-top: 10px;
+    margin-top: -11px;
+    padding-left: 8px;
+    margin-left: 9px;
+    padding-right: 8px;
+    top: 3px;
+}
+
+#gobackbutton {
+    color: #004b87 !important;
+    border-left: 2px solid #004b87 !important;
+    border-radius: 0;
+    transition: 0.3s;
+}
+
+.submit {
+    margin-left: -121px;
+    font-size: 18px;
+    width: 199px;
+    border-bottom: 2px solid #004b87;
+}
+
+#submitthelist {
+    border: transparent;
+    color: #004b87 !important;
+    border-bottom: 2px solid #004b87;
+    margin-left: -23px;
+    font-size: 35px;
+    border-radius: 0;
+    transition: 0.3s;
+    margin-top: -13px;
+    position: relative;
+    width: 22%;
+    top: 68px;
+}
+
+#addtheitem:hover {
+    background-color: #004b87;
+    color: white !important;
+}
+
+#gobackbutton:hover {
+    color: white !important;
+    background-color: #004b87;
+    border-radius: 3px;
+}
+
+#submitthelist:hover {
+    color: white !important;
+    background-color: #004b87;
+    border-radius: 3px;
+}
+
+.btn:hover {
+    color: white !important;
+    background-color: #0068bd !important;
+    border-color: #0068bd !important;
+}
+
+.btn.focus {
+    color: white;
+}
+
+.form {
+    text-align: center;
+    position: relative;
+}
+
+.wrapper {
+    border: 1px solid black;
+    margin: auto;
+    padding: 0%;
+    position: relative;
+    margin-top: 5%;
+}
+
+.nadpis {
+    position: relative;
+    margin: auto;
+    padding: auto;
+    min-width: 100%;
+}
+
+.logo {
+    position: relative;
+    min-width: 12%;
+    width: 12%;
+    height: auto;
+    float: right;
+}
+
+.total {
+    position: fixed;
+    left: 43.5%;
+    top: 100%;
+    width: 191px;
+    transform: scale(1);
+}
+
+.rowo {
+    position: relative;
+}
+
+/* #loading {
+    width: 64%;
+    position: absolute;
+    transform: scale(0.5);
+    z-index: -100;
+    left: 19%;
+} */

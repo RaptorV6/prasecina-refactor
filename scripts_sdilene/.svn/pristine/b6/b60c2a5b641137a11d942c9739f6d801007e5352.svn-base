@@ -1,0 +1,93 @@
+<?php
+namespace ScriptsSC;
+
+require_once 'IDBConnector.php';
+
+class MySQLConnector implements IDBConnector {
+    protected $mySqlConnection;
+    
+    public function connect($server, $dbName, $user, $password) {
+        $this->mySqlConnection = mysqli_connect($server, $user, $password, $dbName);
+        
+        return $this->mySqlConnection;
+    }
+    
+    public function getConnection() {
+        return $this->mySqlConnection;
+    }
+    
+    /**
+     * @deprecated
+     */
+    public function getMySQLConnection() {
+        return $this->getConnection();
+    }
+    
+    public function hasConnection() {
+        return ($this->mySqlConnection) ? true : false;
+    }
+    
+    public function checkConnection($exceptionMessage) {
+        if(!$this->mySqlConnection) {
+            throw new \Exception($exceptionMessage);
+        }
+    }
+    
+    /**
+     * @deprecated
+     */
+    public function query($query) {
+        return $this->executeQuery($query);
+    }
+    
+    /**
+     * @deprecated
+     */
+    public function queryParams($query, $types, $parameters) {
+        return $this->executeQuery($query, $parameters, $types);
+    }
+    
+    public function executeQuery($query, $parameters = null, $types = null) {
+        if($parameters==null) {
+            return mysqli_query($this->mySqlConnection, $query);
+        } else {
+            $stmt = mysqli_prepare($this->mySqlConnection, $query);
+            mysqli_stmt_bind_param($stmt, $types, ...$parameters);
+            mysqli_stmt_execute($stmt);
+            return mysqli_stmt_get_result($stmt);
+        }
+    }
+    
+    public function getLastError() {
+        return mysqli_error($this->mySqlConnection);
+    }
+    
+    public function closeConnection() {
+        if($this->mySqlConnection) {
+            mysqli_close($this->mySqlConnection);
+            return true;
+        } else {
+            return false;
+        }  
+    }
+
+    /**
+     * @deprecated
+     */
+    public function close() {
+        $this->closeConnection();
+    }
+    
+    public function beginTransaction() {
+        return mysqli_begin_transaction($this->mySqlConnection);
+    }
+
+    public function commitTransaction() {
+        return mysqli_commit($this->mySqlConnection);
+    }
+
+    public function rollbackTransaction() {
+        return mysqli_rollback($this->mySqlConnection);
+    }
+
+}

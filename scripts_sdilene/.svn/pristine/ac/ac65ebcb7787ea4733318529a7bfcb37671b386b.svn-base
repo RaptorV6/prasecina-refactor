@@ -1,0 +1,292 @@
+<?php
+namespace ScriptsSC;
+
+require_once 'IDBConnector.php';
+
+/**
+ * APDOConnector - abstraktní předek pro správu databázového spojení přes PDO
+ * 
+ * @author voparilv
+ * Vychází z https://github.com/wickyaswal/indieteq-php-my-sql-pdo-database-class/blob/master/Db.class.php
+ */
+abstract class APDOConnector implements IDBConnector {
+    
+	protected $assocParameters = array();
+    protected $affectedRows;
+    protected $pdo;
+    
+    /**
+     * Vrátí databázové spojení s MS SQL databází
+     * @return databázové spojení
+     */
+    public function getConnection() {
+        return $this->pdo;
+    }
+    
+    /**
+     * Vrátí informaci, zda existuje připojení k databázi
+     * @return boolean
+     */
+    public function hasConnection() {
+        return $this->pdo!=null && $this->pdo!==false;
+    }
+    
+    public function checkConnection($exceptionMessage) {
+        if(!$this->hasConnection()) {
+            throw new \Exception($exceptionMessage);
+        }
+    }
+    
+    public function closeConnection()
+    {
+        if($this->hasConnection()) {
+            $this->pdo = null;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Inicializace SQL dotazu
+     * @param string $query SQL dotaz
+     * @param array $parameters parametry dotazu
+     */
+    private function init($query, $parameters = array())
+    {
+		# Prepare query
+        $this->sQuery = $this->pdo->prepare($query);
+        
+        // pokud je zadán jeden parametr přímo, je vložen do pole
+        if($parameters==null) {
+            $parameters = array();
+        } else if(!is_array($parameters)) {
+            $parameters = array($parameters);
+        }
+
+        if(self::isArrayAssoc($parameters)) {
+            // Asociativní pole parametrů
+            
+            # Add parameters to the parameter array	
+            $this->bindMore($parameters);
+
+            # Bind parameters
+            foreach ($this->assocParameters as $param => $value) {
+                $type = self::getParamType($value[1]);
+                // Add type when binding the values to the column
+                $this->sQuery->bindValue($value[0], $value[1], $type);
+            }
+        } else {
+            // Sekvenční pole parametrů
+            
+            for($i=0; $i<sizeof($parameters); $i++) {
+                $type = self::getParamType($parameters[$i]);
+                $this->sQuery->bindValue($i+1, $parameters[$i], $type);
+            } 
+        }
+        
+        $res = $this->sQuery->execute();
+        
+        $this->assocParameters = array();
+        
+        return $res;
+    }
+    
+    /**
+     * Vrátí typ parametru pro PDO dotaz
+     * @param mixed $paramValue hodnota parametru
+     * @return int
+     */
+    private static function getParamType($paramValue) {
+        if(is_int($paramValue)) {
+            return \PDO::PARAM_INT;
+        } else if(is_bool($paramValue)) {
+            return \PDO::PARAM_BOOL;
+        } else if(is_null($paramValue)) {
+            return \PDO::PARAM_NULL;
+        } else {
+            return \PDO::PARAM_STR;
+        }  
+    }
+    
+    /**
+     * Vrátí true, pokud je pole asociativní
+     * @param array $array pole
+     * @return boolean
+     */
+    private static function isArrayAssoc(array $array)
+    {
+        if(array()===$array) {
+            return false;
+        }
+        return array_keys($array) !== range(0, count($array) - 1);
+    } 
+    
+    /**
+     *	@void 
+     *
+     *	Add the parameter to the parameter array
+     *	@param string $para  
+     *	@param string $value 
+     */
+    public function bind($para, $value)
+    {
+        $this->assocParameters[sizeof($this->assocParameters)] = [":" . $para , $value];
+    }
+    
+    /**
+     *	@void
+     *	
+     *	Add more parameters to the parameter array
+     *	@param array $parray
+     */
+    protected function bindMore($parray)
+    {
+        if (empty($this->assocParameters) && is_array($parray)) {
+            $columns = array_keys($parray);
+            foreach ($columns as $i => &$column) {
+                $this->bind($column, $parray[$column]);
+            }
+        }
+    }
+    
+    /**
+     *  If the SQL query  contains a SELECT or SHOW statement it returns an array containing all of the result set row
+     *	If the SQL statement is a DELETE, INSERT, or UPDATE statement it returns the number of affected rows
+     *
+     *  @param  string  $query SQL dotaz
+     *	@param  array   $parameters parametry dotazu
+     *  @param  boolean $returnStmt zda vracet PDOStatement (true), nebo data (false), výchozí false
+     *	@param  int     $fetchmode fetch mód, výchozí PDO::FETCH_ASSOC
+     *	@return mixed   PDOStatement při $returnStmt = true, data nebo počet ovlivněných řádků jinak
+     */
+    public function executeQuery($query, $parameters = null, $returnStmt = false, $fetchmode = \PDO::FETCH_ASSOC)
+    {
+        $this->affectedRows = -1;
+        
+        $query = trim(str_replace("\r", " ", $query));
+        $queryResult = $this->init($query, $parameters);
+        
+        if($returnStmt) {
+            return $this->sQuery;
+        } else {
+            if(!$queryResult) {
+                return false;
+            }
+            
+            $rawStatement = explode(" ", preg_replace("/\s+|\t+|\n+/", " ", $query));
+
+            # Which SQL statement is used 
+            $statement = strtolower($rawStatement[0]);
+
+            if ($statement === 'select' || $statement === 'show' || $statement === 'call') {
+				return $this->sQuery->fetchAll($fetchmode);
+            } elseif ($statement === 'insert' || $statement === 'update' || $statement === 'delete') {
+                $this->affectedRows = $this->sQuery->rowCount();
+                return $this->sQuery->rowCount();
+            } else {
+                return NULL;
+            }
+        }
+    }
+    
+    /**
+     * Vrátí počet ovlivněných řádků
+     * @param PDOStatement $stmt PDOStatement objekt dotazu
+     * @return integer
+     */
+    public function getAffectedRows($stmt = null) {
+        return $stmt->rowCount();
+    }
+    
+    /**
+     *  Returns the last inserted id.
+     *  @return string
+     */
+    public function lastInsertId()
+    {
+        return $this->pdo->lastInsertId();
+    }
+    
+    /**
+     *	Returns an array which represents a column from the result set 
+     *
+     *	@param  string $query
+     *	@param  array  $params
+     *	@return array
+     */
+    public function column($query, $params = null)
+    {
+        $this->init($query, $params);
+        $Columns = $this->sQuery->fetchAll(\PDO::FETCH_NUM);
+        
+        $column = null;
+        
+        foreach ($Columns as $cells) {
+            $column[] = $cells[0];
+        }
+        
+        return $column;
+    }
+    
+    /**
+     *	Returns an array which represents a row from the result set 
+     *
+     *	@param  string $query
+     *	@param  array  $params
+     *   	@param  int    $fetchmode
+     *	@return array
+     */
+    public function row($query, $params = null, $fetchmode = \PDO::FETCH_ASSOC)
+    {
+        $this->init($query, $params);
+        $result = $this->sQuery->fetch($fetchmode);
+        $this->sQuery->closeCursor(); // Frees up the connection to the server so that other SQL statements may be issued,
+        return $result;
+    }
+    
+    /**
+     *	Returns the value of one single field/column
+     *
+     *	@param  string $query
+     *	@param  array  $params
+     *	@return string
+     */
+    public function single($query, $params = null)
+    {
+        $this->init($query, $params);
+        $result = $this->sQuery->fetchColumn();
+        $this->sQuery->closeCursor(); // Frees up the connection to the server so that other SQL statements may be issued
+        return $result;
+    }
+    
+    /**
+     * Starts the transaction
+     * @return boolean, true on success or false on failure
+     */
+    public function beginTransaction()
+    {
+        return $this->pdo->beginTransaction();
+    }
+    
+    /**
+     *  Commit transaction
+     *  @return boolean, true on success or false on failure
+     */
+    public function commitTransaction()
+    {
+        return $this->pdo->commit();
+    }
+    
+    /**
+     *  Rollback of transaction
+     *  @return boolean, true on success or false on failure
+     */
+    public function rollbackTransaction()
+    {
+        return $this->pdo->rollBack();
+    }
+    
+}
+
+?>

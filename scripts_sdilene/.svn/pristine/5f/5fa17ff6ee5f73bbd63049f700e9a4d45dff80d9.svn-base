@@ -1,0 +1,90 @@
+<?php
+namespace ScriptsSC;
+
+require_once 'IDBConnector.php';
+
+class PgSQLConnector implements IDBConnector {
+    protected $pgSqlConnection;
+    
+    public function connect($server, $port, $dbName, $user, $password) {
+        $this->pgSqlConnection = pg_connect("host=" . $server . " port=" . $port . " dbname=" . $dbName . " user=" . $user . " password=" . $password);
+        
+        return $this->pgSqlConnection;
+    }
+
+    public function getConnection() {
+        return $this->pgSqlConnection;
+    }
+    
+    /**
+     * @deprecated
+     */
+    public function getPgSQLConnection() {
+        return $this->getConnection();
+    }
+    
+    public function hasConnection() {
+        return ($this->pgSqlConnection) ? true : false;
+    }
+    
+    public function checkConnection($exceptionMessage) {
+        if(!$this->pgSqlConnection) {
+            throw new \Exception($exceptionMessage);
+        }
+    }
+    
+    /**
+     * @deprecated
+     */
+    public function query($query) {
+        return $this->executeQuery($query);
+    }
+    
+    /**
+     * @deprecated
+     */
+    public function queryParams($query, $parameters) {
+        return $this->executeQuery($query, $parameters);
+    }
+    
+    public function executeQuery($query, $params = null) {
+        if(!$params) {
+            return pg_query($this->pgSqlConnection, $query);
+        } else {
+            return pg_query_params($this->pgSqlConnection, $query, $params);
+        }
+    }
+    
+    public function getLastError() {
+        return pg_last_error($this->pgSqlConnection);
+    }
+    
+    public function closeConnection() {
+        if($this->pgSqlConnection) {
+            pg_close($this->pgSqlConnection);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @deprecated
+     */
+    public function close() {
+        $this->closeConnection();
+    }
+    
+    public function beginTransaction() {
+        return $this->executeQuery("BEGIN");
+    }
+
+    public function commitTransaction() {
+        return $this->executeQuery("COMMIT");
+    }
+
+    public function rollbackTransaction() {
+        return $this->executeQuery("ROLLBACK");
+    }
+
+}

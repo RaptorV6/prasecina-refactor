@@ -1,0 +1,118 @@
+<?php
+namespace ScriptsSC;
+
+require_once 'Cfg.php';
+require_once __DIR__ . '/../scripts_local/CfgPw.php';
+require_once 'CustomDatabaseConnector.php';
+
+class DatabaseConnector extends CustomDatabaseConnector {
+    
+    public static function getOpenConnectorToCarShare($pap) {
+        return 
+            self::getOpenPgSQLConnector(Cfg::CARSHARE_DB_SERVER, Cfg::CARSHARE_DB_PORT, Cfg::CARSHARE_DB_NAME, Cfg::CARSHARE_DB_USER, CfgPw::getDbPasswordCarShare($pap));
+    }
+    
+    public static function getOpenConnectorToDWHFons($pap) {
+        return 
+            self::getOpenMSSQLConnector(Cfg::DWH_FONS_DB_SERVER, Cfg::DWH_FONS_DB_NAME, Cfg::DWH_FONS_DB_USER, CfgPw::getDbPasswordDWHFons($pap));
+    }
+    
+    public static function getOpenPDOConnectorToDWHFons($pap) {
+        return 
+            self::getOpenMSSQLPDOConnector(Cfg::DWH_FONS_DB_SERVER, Cfg::DWH_FONS_DB_NAME, Cfg::DWH_FONS_DB_USER, CfgPw::getDbPasswordDWHFons($pap));
+    }
+    
+    public static function getOpenPDOConnectorToEVIDOForEvidoPermonik($pap) {
+        return
+            self::getOpenMSSQLPDOConnector(Cfg::EVIDO_DB_SERVER, Cfg::EVIDO_DB_NAME, Cfg::EVIDO_DB_USER_EVIDO_PERMONIK, CfgPw::getDbPasswordEVIDOEvidoPermonik($pap));
+    }
+    
+    public static function getOpenConnectorToHlidaniERecepty($pap, $cvicna = false) {
+        $eReceptyDbName = $cvicna ? Cfg::HLIDANI_ERECEPTY_DB_NAME_CVICNA : Cfg::HLIDANI_ERECEPTY_DB_NAME;
+        return 
+            self::getOpenMSSQLConnector(Cfg::HLIDANI_ERECEPTY_DB_SERVER, $eReceptyDbName, Cfg::HLIDANI_ERECEPTY_DB_USER, CfgPw::getDbPasswordHlidaniERecepty($pap));
+    }
+    
+    public static function getOpenConnectorToKamery($pap) {
+        return 
+            self::getOpenMSSQLConnector(Cfg::KAMERY_DB_SERVER, Cfg::KAMERY_DB_NAME, Cfg::KAMERY_DB_USER, CfgPw::getDbPasswordKamery($pap));
+    }
+    
+    public static function getOpenConnectorToKatetr($pap) {
+        return 
+            self::getOpenPgSQLConnector(Cfg::KATETR_DB_SERVER, Cfg::KATETR_DB_PORT, Cfg::KATETR_DB_NAME, Cfg::KATETR_DB_USER, CfgPw::getDbPasswordKatetr($pap));
+    }
+
+    public static function getOpenConnectorToMevris($pap) {
+        return 
+            self::getOpenMySQLConnector(Cfg::MEVRIS_DB_SERVER, Cfg::MEVRIS_DB_NAME, Cfg::MEVRIS_DB_USER, CfgPw::getDbPasswordMevris($pap));
+    }
+    
+    public static function getOpenConnectorToMKartaCentral($pap, $isReadOnly = false) {
+        $dbUser = (!$isReadOnly) ? Cfg::MKARTA_DB_USER_CENTRAL : Cfg::MKARTA_DB_USER_CENTRAL_RO;
+        $dbPassword = (!$isReadOnly) ? CfgPw::getDbPasswordMKartaCentral($pap) : CfgPw::getDbPasswordMKartaCentralRO($pap);
+        return 
+            self::getOpenPgSQLConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_CENTRAL, $dbUser, $dbPassword);
+    }
+    
+    public static function getOpenConnectorToMKartaNH($pap) {
+        return
+            self::getOpenPgSQLConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_NH, Cfg::MKARTA_DB_USER_NH, CfgPw::getDbPasswordMKartaNH($pap));
+    }
+    
+    public static function getOpenConnectorToMKartaPAR($pap) {
+        return 
+            self::getOpenPgSQLConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_PAR, Cfg::MKARTA_DB_USER_PAR, CfgPw::getDbPasswordMKartaPAR($pap));
+    }
+    
+    public static function getOpenConnectorToMKartaRNB($pap) {
+        return
+            self::getOpenPgSQLConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_RNB, Cfg::MKARTA_DB_USER_RNB, CfgPw::getDbPasswordMKartaRNB($pap));
+    }
+    
+    public static function getOpenPDOConnectorToMKartaNHForPermonikLoader($pap) {
+        return
+            self::getOpenPgSQLPDOConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_NH, Cfg::MKARTA_DB_USER_PERMONIK_LOADER, CfgPw::getDbPasswordMKartaPermonikLoader($pap));
+    }
+    
+    public static function getOpenPDOConnectorToMKartaPARForPermonikLoader($pap) {
+        return 
+            self::getOpenPgSQLPDOConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_PAR, Cfg::MKARTA_DB_USER_PERMONIK_LOADER, CfgPw::getDbPasswordMKartaPermonikLoader($pap));
+    }
+    
+    public static function getOpenPDOConnectorToMKartaRNBForPermonikLoader($pap) {
+        return
+            self::getOpenPgSQLPDOConnector(Cfg::MKARTA_DB_SERVER, Cfg::MKARTA_DB_PORT, Cfg::MKARTA_DB_NAME_RNB, Cfg::MKARTA_DB_USER_PERMONIK_LOADER, CfgPw::getDbPasswordMKartaPermonikLoader($pap));
+    }
+    
+    public static function getOpenPDOConnectorToPermonikNHForPermonikLoader($pap) {
+        return
+            self::getOpenPgSQLPDOConnector(Cfg::PERMONIK_DB_SERVER, Cfg::PERMONIK_DB_PORT, Cfg::PERMONIK_DB_NAME_NH, Cfg::PERMONIK_DB_USER_LOADER, CfgPw::getDbPasswordPermonikPermonikLoader($pap));
+    }
+    
+    public static function getOpenPDOConnectorToPermonikPARForPermonikLoader($pap) {
+        return 
+            self::getOpenPgSQLPDOConnector(Cfg::PERMONIK_DB_SERVER, Cfg::PERMONIK_DB_PORT, Cfg::PERMONIK_DB_NAME_PAR, Cfg::PERMONIK_DB_USER_LOADER, CfgPw::getDbPasswordPermonikPermonikLoader($pap));
+    }
+    
+    public static function getOpenPDOConnectorToPermonikRNBForPermonikLoader($pap) {
+        return
+            self::getOpenPgSQLPDOConnector(Cfg::PERMONIK_DB_SERVER, Cfg::PERMONIK_DB_PORT, Cfg::PERMONIK_DB_NAME_RNB, Cfg::PERMONIK_DB_USER_LOADER, CfgPw::getDbPasswordPermonikPermonikLoader($pap));
+    }
+    
+    public static function getOpenPDOConnectorToPermonikRNBForPermonikClientAllUsersData($pap) {
+        return
+            self::getOpenPgSQLPDOConnector(Cfg::PERMONIK_DB_SERVER, Cfg::PERMONIK_DB_PORT, Cfg::PERMONIK_DB_NAME_RNB, Cfg::PERMONIK_DB_USER_CLIENT_ALL_USERS_DATA, CfgPw::getDbPasswordPermonikPermonikClientAllUsersData($pap));
+    }
+    
+    public static function getOpenConnectorToRecepty($pap) {
+        return 
+            self::getOpenPgSQLConnector(Cfg::RECEPTY_DB_SERVER, Cfg::RECEPTY_DB_PORT, Cfg::RECEPTY_DB_NAME, Cfg::RECEPTY_DB_USER, CfgPw::getDbPasswordRecepty($pap));
+    }
+    
+    public static function getOpenConnectorToZavory($pap) {
+        return 
+            self::getOpenFbSQLConnector(Cfg::ZAVORY_DB_SERVER, Cfg::ZAVORY_DB_PORT, Cfg::ZAVORY_DB_NAME, Cfg::ZAVORY_DB_USER, CfgPw::getDbPasswordZavory($pap));
+    }
+    
+}

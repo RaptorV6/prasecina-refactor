@@ -1,0 +1,86 @@
+<?php
+namespace ScriptsSC;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+require_once __DIR__ . '/Cfg.php';
+require_once __DIR__ . '/CfgPw.php';
+    
+use \PHPMailer\PHPMailer\PHPMailer;
+
+class PHPMailerWrapper {
+    protected $phpMailer;
+    
+    public function __construct() {
+        $mailer = new PHPMailer();
+        $mailer->isSMTP();                                              // Set mailer to use SMTP
+        $mailer->Host = Cfg::PHPMAILER_HOST;                            // Specify main and backup SMTP servers
+        $mailer->SMTPAuth = Cfg::PHPMAILER_SMTP_AUTH;                   // Enable SMTP authentication
+        if($mailer->SMTPAuth) {
+            $mailer->Username = Cfg::PHPMAILER_USERNAME;                // SMTP username
+            $mailer->Password = CfgPw::getPHPMailerPassword('aGh84ac'); // SMTP password
+        }
+        $mailer->SMTPSecure = Cfg::PHPMAILER_SMTP_SECURE;               // Enable TLS encryption, `ssl` also accepted
+        $mailer->Port = Cfg::PHPMAILER_PORT;                            // TCP port to connect to
+
+        $mailer->SMTPOptions = Cfg::PHPMAILER_SMTP_OPTIONS;
+
+        $mailer->setFrom(Cfg::PHPMAILER_DEFAULT_FROM_EMAIL, Cfg::PHPMAILER_DEFAULT_FROM_NAME);
+
+        $mailer->CharSet = Cfg::PHPMAILER_CHARSET;
+        
+        $this->phpMailer = $mailer;
+    }
+    
+    /**
+     * Nastaví odesílatele
+     * Nepovinné, automaticky je přebíráno nastavení z Configu
+     * @param string $fromEmail
+     * @param string $fromName
+     */
+    public function setFromMailerConfig($fromEmail, $fromName) {
+        $this->phpMailer->setFrom($fromEmail, $fromName);
+    }
+    
+    /**
+     * Nastaví adresáty (pouze adresy, beze jmen)
+     * @param array | string $recipients pole adresátů nebo adresát či adresáti oddělení čárkou
+     */
+    public function setRecipients($recipients) {
+        if(!is_array($recipients)) {
+            $recipients = explode(',', $recipients);
+        }
+        $this->phpMailer->clearAddresses(); // vymazání seznamu adresátů
+        foreach($recipients as $recipient){
+            $this->phpMailer->addAddress($recipient);   // Add a recipient
+        }
+    }
+    
+    /**
+     * Nastaví obsah zprávy
+     * @param string $subject The Subject of the message.
+     * @param string $body An HTML or plain text message body. If HTML then call isHTML(true).
+     * @param string $altBody The plain-text message body. This body can be read by mail clients that do not have HTML email capability such as mutt & Eudora. Clients that can read HTML will view the normal Body.
+     */
+    public function setContent($subject, $body, $altBody) {
+        $this->phpMailer->Subject = $subject;
+        $this->phpMailer->Body = $body;
+        $this->phpMailer->AltBody = $altBody;
+    }
+    
+    /**
+     * Vrátí PHPMailer
+     * @return PHPMailer
+     */
+    public function getPHPMailer() {
+        return $this->phpMailer;
+    }
+    
+    /**
+     * Odešle zprávu
+     */
+    public function send() {
+        $this->phpMailer->send();
+    }
+}
+?>

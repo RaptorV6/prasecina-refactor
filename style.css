@@ -1,0 +1,138 @@
+@font-face {
+    font-family: "VarelaRound-Regular";
+    src: url('VarelaRound-Regular.ttf');
+}
+
+@page {
+    margin: 20mm
+}
+
+@media print {
+    .tdr {
+        text-align: right;
+        background-color: white"
+
+    }
+
+  table th {
+        background-color: #004b87;
+        color: white;
+    }
+	
+
+    table.table {
+        empty-cells: hide;
+    }
+    .hid {
+        border: 1px solid Transparent!important;
+        text-align: right;
+        background-color: white;
+        background-color: transparent;
+    }
+    thead {
+        display: table-header-group;
+    }
+    tfoot {
+        display: table-footer-group;
+    }
+    body {
+        margin: 0;
+    }
+    table th {
+        background-color: #004b87;
+        color: white;
+    }
+    .page-header,
+    .page-header-space {
+        height: 100px;
+    }
+    .page-footer,
+    .page-footer-space {
+        height: 50px;
+    }
+    .page-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        border-top: 1px solid black;
+        /* for demo */
+        font-family: 'Varela Round', sans-serif;
+        /* for demo */
+    }
+    .page-header {
+        position: fixed;
+        top: 0mm;
+        width: 100%;
+        border-bottom: 1px solid black;
+        /* for demo */
+        font-family: 'Varela Round', sans-serif;
+        /* for demo */
+    }
+    .page {
+        page-break-after: always;
+        font-family: 'Varela Round', sans-serif;
+    }
+    .table {
+        font-size: 20px;
+        margin: auto;
+        width: 100% !important;
+    }
+    table th {
+        text-align: center;
+    }
+    .center {
+        margin: auto;
+        width: 90%;
+    }
+    #logo {
+        width: 18%;
+        margin-bottom: -13px;
+    }
+    table th {
+        background-color: #004b87;
+        color: white;
+    }
+    .total {
+        position: absolute;
+        left: 39%;
+        top: 369px;
+        transform: scale(1);
+    }
+    .page-header,
+    .page-header-space {
+        height: 100px;
+    }
+    .page-footer,
+    .page-footer-space {
+        height: 50px;
+    }
+    .page-footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        border-top: 1px solid black;
+        /* for demo */
+        font-family: 'Varela Round', sans-serif;
+        /* for demo */
+    }
+    .page-header {
+        position: fixed;
+        top: 0mm;
+        width: 100%;
+        border-bottom: 1px solid black;
+        /* for demo */
+        font-family: 'Varela Round', sans-serif;
+        /* for demo */
+    }
+    .page {
+        page-break-after: always;
+        font-family: 'Varela Round', sans-serif;
+    }
+}
+
+@page {
+    size: auto;
+    /* auto is the initial value */
+    margin: 0mm;
+    /* this affects the margin in the printer settings */
+}
